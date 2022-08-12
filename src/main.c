@@ -21,6 +21,7 @@ int main(int argc, char **argv)
   header_decoder(file_pointer, &header);
   InfoHeader_decoder(file_pointer, &InfoHeader);
   ColorTable_decoder(file_pointer, &ColorTable);
+  Bits_Per_Pixel_Field_Check(&InfoHeader);
 
   fclose(file_pointer);
 }
@@ -66,6 +67,35 @@ void ColorTable_decoder(FILE *file_pointer, t_ColorTable *ColorTable)
   printf("Green = %u \n", ColorTable->Green);
   printf("Blue = %u \n", ColorTable->Blue);
   printf("Reserved = %u \n\n", ColorTable->Reserved);
+}
+
+void Bits_Per_Pixel_Field_Check(t_InfoHeader *InfoHeader)
+{
+  switch (InfoHeader->Bits_Per_Pixel)
+  {
+  case 1:
+    printf("The bitmap is monochrome, and the palette contains two entries.\n\n");
+    break;
+
+  case 4:
+    printf("The bitmap has a maximum of 16 colors, and the palette contains up to 16 entries.\n\n");
+    break;
+  
+  case 8:
+    printf("The bitmap has a maximum of 256 colors, and the palette contains up to 256 entries.\n\n");
+    break;
+
+  case 16:
+    printf("The bitmap has a maximum of 2^16 colors.\n\n");
+    break;
+
+  case 32:
+    printf("The bitmap has a maximum of 2^24 colors, and the Palette field does not contain any entries.\n\n");
+    break;
+
+  default:
+    break;
+  }
 }
 
 void argc_check(int argc)

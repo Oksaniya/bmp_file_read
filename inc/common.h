@@ -72,5 +72,6 @@ void argc_check(int argc);
 void header_decoder(FILE *file_pointer, t_header *header);
 void InfoHeader_decoder(FILE *file_pointer, t_InfoHeader *InfoHeader);
 void ColorTable_decoder(FILE *file_pointer, t_ColorTable *ColorTable);
+void Bits_Per_Pixel_Field_Check(t_InfoHeader *InfoHeader);
 
 #endif
