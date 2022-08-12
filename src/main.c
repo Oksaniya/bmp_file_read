@@ -1,89 +1,72 @@
 #include "../inc/common.h"
 
-t_buff buff;
-
 int main(int argc, char **argv)
 {
-  //t_buff buff;
   t_header header;
+  t_InfoHeader InfoHeader;
+  t_ColorTable ColorTable;
   FILE *file_pointer;
 
- // _Static_assert(15 == sizeof(header), "Struct 'header' size doesn't match");
+  _Static_assert(14 == sizeof(header), "Struct 'header' size doesn't match");
+  _Static_assert(40 == sizeof(InfoHeader), "Struct 'InfoHeader' size doesn't match");
+  _Static_assert(4 == sizeof(ColorTable), "Struct 'ColorTable' size doesn't match");
+  
   file_pointer = fopen(argv[1], "r+");
   if (file_pointer == NULL)
   {
     exit(EXIT_FAILURE);
   }
-  printf("size_f struct %lu \n", sizeof(header));
+
   argc_check(argc);
   header_decoder(file_pointer, &header);
-  fclose(file_pointer);
-
-
-  int fd = 0;
-  fd = open(argv[1], FULL_HEADER);
-  ssize_t res = 0;
-  uint8_t buffer[14];
-
-  res = read(fd, (void *)buffer, 14);
-
-  for (int n = 0; n < FULL_HEADER; n++)
-  {
-    printf("%x ", buffer[n]);
-  }
-  printf("\n\n");
+  InfoHeader_decoder(file_pointer, &InfoHeader);
+  ColorTable_decoder(file_pointer, &ColorTable);
 
   fclose(file_pointer);
-  return 0;
 }
 
 void header_decoder(FILE *file_pointer, t_header *header)
 {
-  //header->identifyer[2] = 0;
-  /*
-  fread((void*)header->identifyer, IDENTIFYER, 1, file_pointer);
-  fread((void*)&header->file_in_bytes, FILE_IN_BYTES, 1, file_pointer);
-  fread((void*)&header->reserved, RESERVED, 1, file_pointer);
-  fread((void*)&header->DataOffset, DATA_OFFSET, 1, file_pointer);
-*/
-memset((void*)header, 0, FULL_HEADER);
-printf("sizeof header = %zu\n", sizeof(*header));
-fread((void*)header, sizeof(*header), 1, file_pointer);
+  memset((void*)header, 0, FULL_HEADER);
+  fread((void*)header, sizeof(*header), 1, file_pointer);
 
+  printf("\nFULL_HEADER has %d bytes.\n", FULL_HEADER);
   printf("BPM Ident = 0x%04X \n", header->identifyer);
   printf("File size = %u \n", header->file_in_bytes);
   printf("Reserved = %u \n", header->reserved);
-  printf("DataOffset = %u \n", header->DataOffset);
+  printf("DataOffset = %u \n\n", header->DataOffset);
 }
 
-/*
-char *ft_strnew(size_t size)
+void InfoHeader_decoder(FILE *file_pointer, t_InfoHeader *InfoHeader)
 {
-    char *str;
-    str = (char *)malloc(size);
+  memset((void*)InfoHeader, 0, INFO_HEADER);
+  fread((void*)InfoHeader, INFO_HEADER, 1, file_pointer);
 
-    if (str == NULL)
-    {
-        return NULL;
-    }
-
-    ft_bzero((void *)str, size);
-    return str;
+  printf("\nINFO_HEADER has %d bytes.\n", INFO_HEADER);
+  printf("Size_ = %u \n", InfoHeader->Size_);
+  printf("Width = %u \n", InfoHeader->Width);
+  printf("Height = %u \n", InfoHeader->Height);
+  printf("Planes = %u \n", InfoHeader->Planes);
+  printf("Bits_Per_Pixel = %u \n", InfoHeader->Bits_Per_Pixel);
+  printf("Compression = %u \n", InfoHeader->Compression);
+  printf("ImageSize = %u \n", InfoHeader->ImageSize);
+  printf("XpixelsPerM = %u \n", InfoHeader->XpixelsPerM);
+  printf("YpixelsPerM = %u \n", InfoHeader->YpixelsPerM);
+  printf("Colors_Used = %u \n", InfoHeader->Colors_Used);
+  printf("Important_Colors = %u \n\n", InfoHeader->Important_Colors);
 }
 
-void ft_bzero(void *ptr, size_t size)
+void ColorTable_decoder(FILE *file_pointer, t_ColorTable *ColorTable)
 {
-	size_t	iterator;
-	char	*p;
-	
-	p = (char *)ptr;
-	iterator = 0;
-	while (iterator < size)
-	{
-		p[iterator] = 0;
-        iterator++;
-	}
-}*/
+  memset((void*)ColorTable, 0, COLOR_TABLE);
+  fread((void*)ColorTable, COLOR_TABLE, 1, file_pointer);
+
+  printf("\nCOLOR_TABLE has %d bytes.\n", COLOR_TABLE);
+  printf("Red = %u \n", ColorTable->Red);
+  printf("Green = %u \n", ColorTable->Green);
+  printf("Blue = %u \n", ColorTable->Blue);
+  printf("Reserved = %u \n\n", ColorTable->Reserved);
+}
 
 void argc_check(int argc)
 {
