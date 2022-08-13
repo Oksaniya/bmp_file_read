@@ -24,6 +24,7 @@ int main(int argc, char **argv)
   Bits_Per_Pixel_Field_Check(&InfoHeader);
 
   fclose(file_pointer);
+  return 0;
 }
 
 void header_decoder(FILE *file_pointer, t_header *header)
